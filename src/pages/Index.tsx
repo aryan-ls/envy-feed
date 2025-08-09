@@ -1,33 +1,26 @@
-import { useState, useEffect } from "react";
-import { AuthForm } from "@/components/AuthForm";
-import { Feed } from "@/components/Feed";
+import { useState } from "react";
+import { CameraScreen } from "@/components/CameraScreen";
+import { ResultScreen } from "@/components/ResultScreen";
 
 const Index = () => {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [currentScreen, setCurrentScreen] = useState<'camera' | 'result'>('camera');
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
-  useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem("currentUser");
-    if (savedUser) {
-      setCurrentUser(savedUser);
-    }
-  }, []);
-
-  const handleAuth = (username: string) => {
-    setCurrentUser(username);
-    localStorage.setItem("currentUser", username);
+  const handleAnalyze = (result: any) => {
+    setAnalysisResult(result);
+    setCurrentScreen('result');
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem("currentUser");
+  const handleBack = () => {
+    setCurrentScreen('camera');
+    setAnalysisResult(null);
   };
 
-  if (!currentUser) {
-    return <AuthForm onAuth={handleAuth} />;
+  if (currentScreen === 'result' && analysisResult) {
+    return <ResultScreen result={analysisResult} onBack={handleBack} />;
   }
 
-  return <Feed currentUser={currentUser} onLogout={handleLogout} />;
+  return <CameraScreen onAnalyze={handleAnalyze} />;
 };
 
 export default Index;
